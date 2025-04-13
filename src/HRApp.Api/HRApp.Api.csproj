@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HRApp.Application\HRApp.Application.csproj" />
+    <ProjectReference Include="..\HRApp.Infrastructure\HRApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
