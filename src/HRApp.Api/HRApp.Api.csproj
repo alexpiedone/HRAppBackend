@@ -8,11 +8,18 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HRApp.Application\HRApp.Application.csproj" />
+    <ProjectReference Include="..\HRApp.Domain\HRApp.Domain.csproj" />
     <ProjectReference Include="..\HRApp.Infrastructure\HRApp.Infrastructure.csproj" />
   </ItemGroup>
+
+    <PropertyGroup>
+	    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
+
 
 </Project>

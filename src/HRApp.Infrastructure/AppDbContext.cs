@@ -12,18 +12,27 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        var entityTypes = Assembly.GetExecutingAssembly()
-                                  .GetTypes()
-                                  .Where(t => t.IsClass &&
-                                    !t.IsAbstract &&
-                                    t.GetCustomAttribute<DbTableAttribute>() != null)
-                                  .ToList();
-
-        foreach (var entityType in entityTypes)
+        var assemblies = new[]
         {
-            var method = typeof(ModelBuilder).GetMethod("Entity", new Type[] { });
-            var entityMethod = method.MakeGenericMethod(entityType);
-            entityMethod.Invoke(modelBuilder, null);
+            Assembly.GetExecutingAssembly(),
+            Assembly.Load("HRApp.Domain")
+        };
+
+        var entityTypes = assemblies
+            .SelectMany(a => a.GetTypes())
+            .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttribute<DbTableAttribute>() != null)
+            .ToList();
+
+        foreach (var type in entityTypes)
+        {
+            var method = typeof(ModelBuilder).GetMethods()
+                .FirstOrDefault(m => m.Name == "Entity" && m.IsGenericMethod && m.GetParameters().Length == 0);
+
+            if (method != null)
+            {
+                var generic = method.MakeGenericMethod(type);
+                generic.Invoke(modelBuilder, null);
+            }
         }
     }
 }
