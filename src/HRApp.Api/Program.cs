@@ -24,6 +24,7 @@ InfrastructureServices.AddInfrastructure(builder.Services);
 
 var app = builder.Build();
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -36,6 +37,6 @@ app.UseHttpsRedirection();
 // Enable routing & controller support
 app.UseRouting();
 app.UseAuthorization();
-app.MapControllers(); // <- important pentru controller-based API
+app.MapControllers(); 
 
 app.Run();
