@@ -7,6 +7,8 @@ public abstract class Request : BaseEntity
     public RequestStatus Status { get; set; } = RequestStatus.Draft;
     public string? Comment { get; set; }
 
+    public Guid UserId { get; set; }
+
 }
 
 public enum RequestStatus
@@ -15,5 +17,6 @@ public enum RequestStatus
     Submitted,
     Approved,
     Rejected,
-    Cancelled
+    Cancelled,
+    Pending
 }
