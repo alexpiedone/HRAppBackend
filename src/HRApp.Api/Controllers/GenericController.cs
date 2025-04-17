@@ -1,5 +1,6 @@
 ﻿using HRApp.Application;
 using HRApp.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRApp.Api;
@@ -18,6 +19,7 @@ public abstract class GenericController<T> : ControllerBase
     }
 
     [HttpGet("GetAll")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<T>>> GetAll()
     {
         var items = await _repository.GetAllAsync();
