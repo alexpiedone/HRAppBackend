@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRApp.Infrastructure;
 
-public class LeaveRequestRepository : Repository<LeaveRequest>, ILeaveRequestRepository
+public class LeaveRequestRepository : BaseRepository<LeaveRequest>, ILeaveRequestRepository
 {
     public LeaveRequestRepository(AppDbContext context) : base(context) {}
 

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -11,21 +12,30 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
-builder.Services.AddOpenApi();
+// Register controllers
+builder.Services.AddControllers();
+
+// Swagger & OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// DI pentru Infrastructure
 InfrastructureServices.AddInfrastructure(builder.Services);
 
 var app = builder.Build();
 
-
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseHttpsRedirection();
 
-app.Run();
+// Enable routing & controller support
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllers(); // <- important pentru controller-based API
 
+app.Run();

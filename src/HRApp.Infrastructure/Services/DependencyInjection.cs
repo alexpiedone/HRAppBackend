@@ -8,9 +8,8 @@ public static class InfrastructureServices
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
-
+        services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+        services.AddScoped<IDocumentRepository,DocumentRepository>();
         return services;
     }
 }

@@ -17,14 +17,14 @@ public abstract class GenericController<T> : ControllerBase
         _repository = repository;
     }
 
-    [HttpGet]
+    [HttpGet("GetAll")]
     public async Task<ActionResult<IEnumerable<T>>> GetAll()
     {
         var items = await _repository.GetAllAsync();
         return Ok(items);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("GetById/{id}")]
     public async Task<ActionResult<T>> GetById(Guid id)
     {
         var item = await _repository.GetByIdAsync(id);
@@ -33,14 +33,14 @@ public abstract class GenericController<T> : ControllerBase
         return Ok(item);
     }
 
-    [HttpPost]
+    [HttpPost("Create")]
     public async Task<ActionResult<T>> Create([FromBody] T item)
     {
         await _repository.AddAsync(item);
         return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("Update/{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] T item)
     {
         if (id != item.Id)
@@ -50,7 +50,7 @@ public abstract class GenericController<T> : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("Delete/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var item = await _repository.GetByIdAsync(id);
