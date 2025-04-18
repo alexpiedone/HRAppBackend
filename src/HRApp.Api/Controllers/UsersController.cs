@@ -16,9 +16,9 @@ public class UsersController : GenericController<User>
         _userRepository = userRepository;
     }
 
-    public async Task<IEnumerable<User>> GetColleagues(Guid userId)
+    public async Task<IEnumerable<User>> GetColleagues()
     {
-        var currentUser = await _userRepository.GetByIdAsync(userId, throwError: true);
+        var currentUser = (await _userRepository.Query(u=>u.Active).FirstOrDefaultAsync())!;
         return await _userRepository.Query(u => u.Id != currentUser.Id && u.CompanyId == currentUser.CompanyId)
                 .ToListAsync();;
     }

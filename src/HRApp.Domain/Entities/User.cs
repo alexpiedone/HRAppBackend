@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace HRApp.Domain;
+﻿namespace HRApp.Domain;
 
 
 [DbTable("Users")]
@@ -16,7 +14,7 @@ public class User : BaseEntity
     public Guid CompanyId { get; set; }
     public Company? Company { get; set; }
     
-    public ICollection<Request> Responsabilities { get; set; } = [];
+    public ICollection<Responsability> Responsabilities { get; set; } = [];
     public ICollection<Request> Requests { get; set; } = [];
     public ICollection<Notification> Notifications { get; set; } = [];
 }
