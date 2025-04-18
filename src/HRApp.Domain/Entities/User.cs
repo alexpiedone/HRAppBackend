@@ -1,4 +1,6 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HRApp.Domain;
 
 
 [DbTable("Users")]
@@ -8,12 +10,15 @@ public class User : BaseEntity
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
-
-    public UserRole Role { get; set; } = UserRole.Employee;
-    public bool IsActive { get; set; } = true;
     
-    public ICollection<Request> Requests { get; set; } = new List<Request>();
-    public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+    public string Phone { get; set; } = string.Empty;
+    public string Avatar { get; set; } = string.Empty;
+    public Guid CompanyId { get; set; }
+    public Company? Company { get; set; }
+    
+    public ICollection<Request> Responsabilities { get; set; } = [];
+    public ICollection<Request> Requests { get; set; } = [];
+    public ICollection<Notification> Notifications { get; set; } = [];
 }
 
 public enum UserRole
