@@ -17,7 +17,6 @@ public class CompaniesController : GenericController<Company>
     }
 }
 
-
 [ApiController]
 [Route("api/[controller]")]
 public class ResponsabilitiesController : GenericController<Responsability>
@@ -42,4 +41,25 @@ public class UserResponsabilitiesController : GenericController<UserResponsibili
     {
         _baseRepository = baserepo;
     }
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class ProjectsController : GenericController<Project>
+{
+    public ProjectsController(IBaseRepository<Project> baserepo) : base(baserepo) { }
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class UserProjectsController : GenericController<UserProject>
+{
+    public UserProjectsController(IBaseRepository<UserProject> baserepo) : base(baserepo) { }
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class FilesController : GenericController<Project>
+{
+    public FilesController(IBaseRepository<Project> baserepo) : base(baserepo) { }
 }
