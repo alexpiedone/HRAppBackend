@@ -4,5 +4,5 @@ namespace HRApp.Application;
 
 public interface ILeaveRequestRepository : IBaseRepository<LeaveRequest>
 {
-    Task<List<LeaveRequest>> GetPendingRequestsByUserIdAsync(Guid userId);
+    Task<List<LeaveRequest>> GetPendingRequestsByUserIdAsync(int userId);
 }

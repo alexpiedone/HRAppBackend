@@ -1,0 +1,45 @@
+﻿using HRApp.Application;
+using HRApp.Domain;
+using Microsoft.AspNetCore.Mvc;
+
+namespace HRApp.Api;
+
+[ApiController]
+[Route("api/[controller]")]
+public class CompaniesController : GenericController<Company>
+{
+    private readonly IBaseRepository<Company> _baseRepository;
+
+    public CompaniesController(IBaseRepository<Company> baserepo)
+        : base(baserepo)
+    {
+        _baseRepository = baserepo;
+    }
+}
+
+
+[ApiController]
+[Route("api/[controller]")]
+public class ResponsabilitiesController : GenericController<Responsability>
+{
+    private readonly IBaseRepository<Responsability> _baseRepository;
+
+    public ResponsabilitiesController(IBaseRepository<Responsability> baserepo)
+        : base(baserepo)
+    {
+        _baseRepository = baserepo;
+    }
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class UserResponsabilitiesController : GenericController<UserResponsibility>
+{
+    private readonly IBaseRepository<UserResponsibility> _baseRepository;
+
+    public UserResponsabilitiesController(IBaseRepository<UserResponsibility> baserepo)
+        : base(baserepo)
+    {
+        _baseRepository = baserepo;
+    }
+}

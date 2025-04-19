@@ -16,7 +16,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
         _dbSet = context.Set<T>();
     }
 
-    public async Task<T?> GetByIdAsync(Guid id, bool throwError = false)
+    public async Task<T?> GetByIdAsync(int id, bool throwError = false)
     {
         var result = await _dbSet.FindAsync(id);
         if (result == null && throwError)

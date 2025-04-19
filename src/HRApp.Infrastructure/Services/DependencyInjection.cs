@@ -10,6 +10,7 @@ public static class InfrastructureServices
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IDocumentRepository,DocumentRepository>();
         services.AddScoped<INewsRepository, NewsRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 }

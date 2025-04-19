@@ -16,6 +16,7 @@ public class UsersController : GenericController<User>
         _userRepository = userRepository;
     }
 
+    [HttpGet("GetColleagues")]
     public async Task<IEnumerable<User>> GetColleagues()
     {
         var currentUser = (await _userRepository.Query(u=>u.Active).FirstOrDefaultAsync())!;

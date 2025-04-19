@@ -10,7 +10,7 @@ public class NewsRepository : BaseRepository<NewsItem>, INewsRepository
     {
     }
 
-    public async Task<List<NewsItem>> GetNewsForUserAsync(Guid userId)
+    public async Task<List<NewsItem>> GetNewsForUserAsync(int userId)
     {
         return await _context.Set<NewsItem>()
             .Where(n => n.Active)

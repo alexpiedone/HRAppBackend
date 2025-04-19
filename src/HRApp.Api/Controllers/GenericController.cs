@@ -27,7 +27,7 @@ public abstract class GenericController<T> : ControllerBase
     }
 
     [HttpGet("GetById/{id}")]
-    public async Task<ActionResult<T>> GetById(Guid id)
+    public async Task<ActionResult<T>> GetById(int id)
     {
         var item = await _repository.GetByIdAsync(id);
         if (item == null)
@@ -43,7 +43,7 @@ public abstract class GenericController<T> : ControllerBase
     }
 
     [HttpPut("Update/{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] T item)
+    public async Task<IActionResult> Update(int id, [FromBody] T item)
     {
         if (id != item.Id)
             return BadRequest();
@@ -53,7 +53,7 @@ public abstract class GenericController<T> : ControllerBase
     }
 
     [HttpDelete("Delete/{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(int id)
     {
         var item = await _repository.GetByIdAsync(id);
         if (item == null)

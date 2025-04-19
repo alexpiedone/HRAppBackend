@@ -11,7 +11,7 @@ public class User : BaseEntity
     
     public string Phone { get; set; } = string.Empty;
     public string Avatar { get; set; } = string.Empty;
-    public Guid CompanyId { get; set; }
+    public int CompanyId { get; set; }
     public Company? Company { get; set; }
     
     public ICollection<Responsability> Responsabilities { get; set; } = [];
