@@ -12,27 +12,47 @@ namespace HRApp.Api;
 public class UsersController : GenericController<User>
 {
     private readonly IUserRepository _userRepository;
-    public UsersController(IUserRepository userRepository) : base(userRepository)
+    private readonly IFileRepository _fileRepository;
+    public UsersController(IUserRepository userRepository, IFileRepository fileRepository) : base(userRepository)
     {
         _userRepository = userRepository;
+        _fileRepository = fileRepository;
     }
 
     [HttpGet("GetColleagues")]
-    public async Task<IEnumerable<User>> GetColleagues()
+    public async Task<IEnumerable<ColleagueDto>> GetColleagues()
     {
-        var currentUser = (await _userRepository.Query(u => u.Active).FirstOrDefaultAsync())!;
-        return await _userRepository.Query(u => u.Id != currentUser.Id && u.CompanyId == currentUser.CompanyId)
-                .ToListAsync(); ;
+
+        var users = await _userRepository.Query(u => u.Active)
+            .Include(u => u.AvatarFile)
+            .Include(u => u.UserResponsibilities)
+                .ThenInclude(ur => ur.Responsibility)
+            .Include(u => u.UserProjects)
+                .ThenInclude(up => up.Project)
+            .ToListAsync();
+        var result = users.Select(u => new  ColleagueDto
+        {
+            Id = u.Id,
+            Name = u.FullName, // sau FirstName + LastName
+            Email = u.Email,
+            Phone = u.Phone,
+            Responsibilities = string.Join(", ", u.UserResponsibilities.Select(r => r.Responsibility.Description)),
+            //AvatarUrl = u.Avatar != null ? $"api/files/{u.Avatar.Id}" : null,
+            Projects = u.UserProjects.Select(up => up.Project.Name).ToList()
+        });
+
+        return result;
     }
 
     [HttpPost("upload-avatar/{userId}")]
+    [Consumes("multipart/form-data")]
     public async Task<IActionResult> UploadAvatar(int userId, IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("No file uploaded.");
 
         var user = await _userRepository.GetByIdAsync(userId, true);
-        
+
         var fileData = new File
         {
             FileName = file.FileName,
@@ -45,8 +65,7 @@ public class UsersController : GenericController<User>
             fileData.Data = memoryStream.ToArray();
         }
 
-        //_context.Files.Add(fileData);
-        //await _context.SaveChangesAsync();
+        await _fileRepository.AddAsync(fileData);
 
         user.AvatarFileId = fileData.Id;
         await _userRepository.UpdateAsync(user);

@@ -20,6 +20,7 @@ public class User : BaseEntity
     public ICollection<UserProject> UserProjects { get; set; } = [];
     public ICollection<Project> Projects { get; set; } = [];
     
+    public ICollection<UserResponsibility> UserResponsibilities { get; set; } = [];
     public ICollection<Responsability> Responsabilities { get; set; } = [];
 
     public ICollection<Request> Requests { get; set; } = [];

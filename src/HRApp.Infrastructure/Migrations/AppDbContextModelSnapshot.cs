@@ -568,7 +568,7 @@ namespace HRApp.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("HRApp.Domain.User", "User")
-                        .WithMany()
+                        .WithMany("UserResponsibilities")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -599,6 +599,8 @@ namespace HRApp.Infrastructure.Migrations
                     b.Navigation("Responsabilities");
 
                     b.Navigation("UserProjects");
+
+                    b.Navigation("UserResponsibilities");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250419130830_removedGuids")]
-    partial class removedGuids
+    [Migration("20250420060856_updates")]
+    partial class updates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,6 +117,37 @@ namespace HRApp.Infrastructure.Migrations
                     b.ToTable("Employee");
                 });
 
+            modelBuilder.Entity("HRApp.Domain.File", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("File");
+                });
+
             modelBuilder.Entity("HRApp.Domain.NewsItem", b =>
                 {
                     b.Property<int>("Id")
@@ -180,6 +211,38 @@ namespace HRApp.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notification");
+                });
+
+            modelBuilder.Entity("HRApp.Domain.Project", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Project");
                 });
 
             modelBuilder.Entity("HRApp.Domain.Request", b =>
@@ -306,9 +369,8 @@ namespace HRApp.Infrastructure.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Avatar")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("AvatarFileId")
+                        .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
@@ -341,11 +403,42 @@ namespace HRApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AvatarFileId");
+
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("TrainingId");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("HRApp.Domain.UserProject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserProject");
                 });
 
             modelBuilder.Entity("HRApp.Domain.UserResponsibility", b =>
@@ -406,6 +499,13 @@ namespace HRApp.Infrastructure.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("HRApp.Domain.Project", b =>
+                {
+                    b.HasOne("HRApp.Domain.User", null)
+                        .WithMany("Projects")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("HRApp.Domain.Request", b =>
                 {
                     b.HasOne("HRApp.Domain.User", null)
@@ -424,6 +524,10 @@ namespace HRApp.Infrastructure.Migrations
 
             modelBuilder.Entity("HRApp.Domain.User", b =>
                 {
+                    b.HasOne("HRApp.Domain.File", "AvatarFile")
+                        .WithMany()
+                        .HasForeignKey("AvatarFileId");
+
                     b.HasOne("HRApp.Domain.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -434,7 +538,28 @@ namespace HRApp.Infrastructure.Migrations
                         .WithMany("Participants")
                         .HasForeignKey("TrainingId");
 
+                    b.Navigation("AvatarFile");
+
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("HRApp.Domain.UserProject", b =>
+                {
+                    b.HasOne("HRApp.Domain.Project", "Project")
+                        .WithMany("UserProjects")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HRApp.Domain.User", "User")
+                        .WithMany("UserProjects")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HRApp.Domain.UserResponsibility", b =>
@@ -446,7 +571,7 @@ namespace HRApp.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("HRApp.Domain.User", "User")
-                        .WithMany()
+                        .WithMany("UserResponsibilities")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -454,6 +579,11 @@ namespace HRApp.Infrastructure.Migrations
                     b.Navigation("Responsibility");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HRApp.Domain.Project", b =>
+                {
+                    b.Navigation("UserProjects");
                 });
 
             modelBuilder.Entity("HRApp.Domain.Training", b =>
@@ -465,9 +595,15 @@ namespace HRApp.Infrastructure.Migrations
                 {
                     b.Navigation("Notifications");
 
+                    b.Navigation("Projects");
+
                     b.Navigation("Requests");
 
                     b.Navigation("Responsabilities");
+
+                    b.Navigation("UserProjects");
+
+                    b.Navigation("UserResponsibilities");
                 });
 #pragma warning restore 612, 618
         }
