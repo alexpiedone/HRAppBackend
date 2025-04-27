@@ -2,6 +2,8 @@
 using HRApp.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using static HRApp.Api.MockData;
 
 namespace HRApp.Api;
 
@@ -11,84 +13,62 @@ namespace HRApp.Api;
 public class LotteriesController : GenericController<Lottery>
 {
     private readonly IBaseRepository<Lottery> _lotteryRepository;
-
-    public LotteriesController(IBaseRepository<Lottery> lotteryRepository) : base(lotteryRepository)
+    private readonly IMemoryCache _memoryCache;
+    public LotteriesController(IBaseRepository<Lottery> lotteryRepository,
+        IMemoryCache memoryCache) : base(lotteryRepository)
     {
         _lotteryRepository = lotteryRepository;
+        _memoryCache = memoryCache;
     }
 
     [HttpGet("CarouselData")]
     public async Task<ActionResult<IEnumerable<LotteryCarouselDTO>>> GetLotteryCarouselData(
-        [FromQuery] LotteryCarouselRequest request)
+    [FromQuery] LotteryCarouselRequest request)
     {
-        //IQueryable<Lottery> activeLotteries = _lotteryRepository.Query(l => l.Active);
-        var activeLotteries = MockData.MockLotteryCarousels;
+        string cacheKey = $"lotteryData_{request.LotteryName}_{request.Page}_{request.PageSize}";
+
+        if (_memoryCache.TryGetValue(cacheKey, out var cachedData))
+        {
+            return Ok(cachedData);
+        }
+        var activeLotteries = MockLotteryData.MockLotteryCarousels.AsQueryable();
 
         if (!string.IsNullOrEmpty(request.LotteryName))
+        {
             activeLotteries = activeLotteries.Where(l => l.Name.Contains(request.LotteryName));
-
-        //switch (request.SortBy?.ToLower())
-        //{
-        //    case "drawtime":
-        //        activeLotteries = activeLotteries.OrderBy(l => l.DrawTime);
-        //        break;
-        //    case "jackpot":
-        //        activeLotteries = activeLotteries.OrderBy(l => l.Jackpot);
-        //        break;
-        //    case "name":
-        //        activeLotteries = activeLotteries.OrderBy(l => l.Name);
-        //        break;
-        //    default:
-        //        activeLotteries = activeLotteries.OrderBy(l => l.DrawTime); // Default sorting
-        //        break;
-        //}
+        }
 
         var totalCount = activeLotteries.Count();
-        var pagedlotteries = activeLotteries
-            .Skip((request.Page- 1) * request.PageSize)
-            .Take(request.PageSize);
+        var pagedLotteries = activeLotteries
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToList();
+        var result = new { TotalCount = totalCount, Items = pagedLotteries };
+        var cacheExpiration = TimeSpan.FromMinutes(5);
+        _memoryCache.Set(cacheKey, result, cacheExpiration);
 
-        var results = pagedlotteries.Select(l => new LotteryCarouselDTO
-        {
-            Id = l.Id,
-            Name = l.Name,
-            LogoUrl = l.LogoUrl,
-            Jackpot = l.Jackpot,
-            DrawTime = l.DrawTime,
-            CardLink = l.CardLink
-        });
-
-        return Ok(new { TotalCount = totalCount, Items = results });
+        return Ok(result);
     }
 
     [HttpGet("Result/{id}")]
     public async Task<ActionResult<LotteryResultDto>> GetLotteryResult(int id)
     {
-        var lottery = await _lotteryRepository.Query(l => l.Id == id)
-            .Include(l => l.Results.OrderByDescending(r => r.ResultDateTime).FirstOrDefault())
-            .FirstOrDefaultAsync();
+        var result = MockLotteryData.GetResultByLotteryId(id);
 
-        if (lottery == null || lottery.Results.FirstOrDefault() == null)
+        if (result == null)
         {
             return NotFound();
         }
 
-        var latestResult = lottery.Results.First();
-
-        return Ok(new LotteryResultDto
-        {
-            ResultDateTime = latestResult.ResultDateTime,
-            WinningBalls = latestResult.WinningBalls,
-            Link1 = latestResult.Link1,
-            Link2 = latestResult.Link2
-        });
+        return Ok(result);
     }
-
     public class LotteryCarouselRequest
     {
         public string LotteryName { get; set; }
-        public string SortBy { get; set; }
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
+        public string SortBy { get; set; } = "name_asc"; // Default sorting to Name Ascending
     }
+
+
 }

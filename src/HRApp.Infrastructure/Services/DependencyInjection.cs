@@ -9,8 +9,8 @@ public static class InfrastructureServices
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+        services.AddMemoryCache();
         RegisterRepositories(services, Assembly.GetExecutingAssembly());
-
         return services;
     }
 
