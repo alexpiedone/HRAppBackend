@@ -11,11 +11,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         sqlOptions => sqlOptions.MigrationsAssembly("HRApp.Infrastructure")
     )
 );
+builder.Host.ConfigureSerilog(builder.Configuration);
 
-// Register controllers
 builder.Services.AddControllers();
 
-// Swagger & OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -34,8 +33,8 @@ InfrastructureServices.AddInfrastructure(builder.Services);
 
 var app = builder.Build();
 
-app.UseMiddleware<ErrorHandlingMiddleware>();
-// Configure the HTTP request pipeline.
+app.UseMiddleware<RequestLoggingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

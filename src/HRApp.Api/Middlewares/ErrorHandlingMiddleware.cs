@@ -3,7 +3,6 @@ using System.Text.Json;
 
 namespace HRApp.Api;
 
-
 public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate _next;

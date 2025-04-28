@@ -3,10 +3,22 @@
 [DbTable("LogEntries")]
 public class LogEntry : BaseEntity
 {
-    public DateTime Timestamp { get; set; }
-    public string Level { get; set; } = "info"; // info / error
-    public string Message { get; set; } = string.Empty;
-    public string CorrelationId { get; set; } = string.Empty;
-    public string App { get; set; } = "HR-Frontend";
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
+    public string Actor { get; set; } 
+    
+    public string Action { get; set; } 
+    
+    public string Context { get; set; } 
+    
+    public TimeSpan Duration { get; set; } 
+    
+    public string StatusCode { get; set; } 
+    
+    public bool Success { get; set; }
+    
+    public string ErrorMessage { get; set; } 
+    
+    public string AdditionalData { get; set; } 
 }
 

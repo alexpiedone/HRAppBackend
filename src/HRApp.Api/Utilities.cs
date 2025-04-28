@@ -1,6 +1,12 @@
 ﻿using HRApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Serilog.Sinks.MSSqlServer;
+using Serilog;
 using System.Diagnostics;
+using Serilog.Core;
+using Serilog.Events;
+using System.Collections.ObjectModel;
+using System.Data;
 
 namespace HRApp.Api;
 
@@ -87,5 +93,55 @@ public static class Utilities
         }
 
         Console.WriteLine(" Auto-migration completed.");
+    }
+
+      public static IHostBuilder ConfigureSerilog(this IHostBuilder hostBuilder, IConfiguration configuration)
+    {
+        return hostBuilder.UseSerilog((context, services, loggerConfiguration) =>
+        {
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            
+            loggerConfiguration
+                .ReadFrom.Configuration(context.Configuration)
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("ApplicationName", "HRApp")
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentName()
+                .WriteTo.MSSqlServer(
+                    connectionString: connectionString,
+                    sinkOptions: new MSSqlServerSinkOptions
+                    {
+                        TableName = "Logs",
+                        AutoCreateSqlTable = true,
+                        SchemaName = "dbo",
+                        BatchPostingLimit = 1000,
+                        BatchPeriod = TimeSpan.FromSeconds(5) 
+                    },
+                    columnOptions: GetColumnOptions(),
+                    restrictedToMinimumLevel: LogEventLevel.Information);
+            
+            if (context.HostingEnvironment.IsDevelopment())
+            {
+                loggerConfiguration.WriteTo.Console();
+            }
+        });
+    }
+
+    private static ColumnOptions GetColumnOptions()
+    {
+        var columnOptions = new ColumnOptions
+        {
+            AdditionalColumns = new Collection<SqlColumn>
+            {
+                new("ApplicationName", SqlDbType.NVarChar,true, 50),
+                new("MachineName", SqlDbType.NVarChar, true, 50),
+                new("UserId", SqlDbType.NVarChar, true, 50) 
+            }
+        };
+        
+        columnOptions.Store.Remove(StandardColumn.Properties);
+        columnOptions.Store.Remove(StandardColumn.MessageTemplate);
+        
+        return columnOptions;
     }
 }
