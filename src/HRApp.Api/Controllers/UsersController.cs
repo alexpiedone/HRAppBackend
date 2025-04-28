@@ -13,6 +13,7 @@ public class UsersController : GenericController<User>
 {
     private readonly IUserRepository _userRepository;
     private readonly IFileRepository _fileRepository;
+
     public UsersController(IUserRepository userRepository, IFileRepository fileRepository) : base(userRepository)
     {
         _userRepository = userRepository;

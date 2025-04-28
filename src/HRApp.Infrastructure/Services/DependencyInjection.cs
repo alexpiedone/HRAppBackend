@@ -14,9 +14,6 @@ public static class InfrastructureServices
         return services;
     }
 
-    /// <summary>
-    /// Inregistreaza toate serviciile care respecta denumirea IxRepository & xRepository
-    /// </summary>
     public static void RegisterRepositories(this IServiceCollection services, Assembly assembly)
     {
         var repositoryTypes = assembly.GetTypes()
