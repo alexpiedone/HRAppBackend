@@ -3,5 +3,5 @@
 [DbTable("Responsabilities")]
 public class Responsability : BaseEntity
 {
-    public string Description { get; set; } = string.Empty; 
+    public string Description { get; set; } = string.Empty;
 }
