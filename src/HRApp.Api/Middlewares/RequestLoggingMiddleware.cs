@@ -1,7 +1,4 @@
-﻿using HRApp.Domain;
-using System.Diagnostics;
-using System.Text.Json;
-
+﻿
 namespace HRApp.Api;
 
 public class RequestLoggingMiddleware
@@ -18,29 +15,32 @@ public class RequestLoggingMiddleware
     public async Task Invoke(HttpContext context)
     {
         var startTime = DateTime.UtcNow;
-        
-        try
+
+        using (_logger.BeginScope(new Dictionary<string, object> { ["LogRequest"] = true }))
         {
-            await _next(context);
-            var elapsedMs = (DateTime.UtcNow - startTime).TotalMilliseconds;
-            
-            _logger.LogInformation(
-                "HTTP {Method} {Path} responded {StatusCode} in {ElapsedMs}ms",
-                context.Request.Method,
-                context.Request.Path,
-                context.Response.StatusCode,
-                elapsedMs);
-        }
-        catch (Exception ex)
-        {
-            var elapsedMs = (DateTime.UtcNow - startTime).TotalMilliseconds;
-            _logger.LogError(ex,
-                "HTTP {Method} {Path} failed with exception after {ElapsedMs}ms",
-                context.Request.Method,
-                context.Request.Path,
-                elapsedMs);
-            
-            throw;
+            try
+            {
+                await _next(context);
+                var elapsed = (DateTime.UtcNow - startTime).TotalMilliseconds;
+
+                _logger.LogInformation(
+                    "HTTP_REQUEST {Method} {Path} responded {StatusCode} in {ElapsedMs}ms",
+                    context.Request.Method,
+                    context.Request.Path,
+                    context.Response.StatusCode,
+                    elapsed);
+            }
+            catch (Exception ex)
+            {
+                var elapsed = (DateTime.UtcNow - startTime).TotalMilliseconds;
+                _logger.LogError(
+                    ex,
+                    "HTTP {Method} {Path} failed after {ElapsedMs}ms",
+                    context.Request.Method,
+                    context.Request.Path,
+                    elapsed);
+                throw;
+            }
         }
     }
 }

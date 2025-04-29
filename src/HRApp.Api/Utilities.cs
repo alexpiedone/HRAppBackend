@@ -7,6 +7,9 @@ using Serilog.Core;
 using Serilog.Events;
 using System.Collections.ObjectModel;
 using System.Data;
+using Serilog.Context;
+using System.Security.Claims;
+using System;
 
 namespace HRApp.Api;
 
@@ -95,18 +98,19 @@ public static class Utilities
         Console.WriteLine(" Auto-migration completed.");
     }
 
-      public static IHostBuilder ConfigureSerilog(this IHostBuilder hostBuilder, IConfiguration configuration)
+    public static IHostBuilder ConfigureSerilog(this IHostBuilder hostBuilder, IConfiguration configuration)
     {
         return hostBuilder.UseSerilog((context, services, loggerConfiguration) =>
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            
+
             loggerConfiguration
                 .ReadFrom.Configuration(context.Configuration)
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("ApplicationName", "HRApp")
                 .Enrich.WithMachineName()
                 .Enrich.WithEnvironmentName()
+                .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
                 .WriteTo.MSSqlServer(
                     connectionString: connectionString,
                     sinkOptions: new MSSqlServerSinkOptions
@@ -115,15 +119,41 @@ public static class Utilities
                         AutoCreateSqlTable = true,
                         SchemaName = "dbo",
                         BatchPostingLimit = 1000,
-                        BatchPeriod = TimeSpan.FromSeconds(5) 
+                        BatchPeriod = TimeSpan.FromSeconds(5)
                     },
                     columnOptions: GetColumnOptions(),
-                    restrictedToMinimumLevel: LogEventLevel.Information);
-            
-            if (context.HostingEnvironment.IsDevelopment())
-            {
-                loggerConfiguration.WriteTo.Console();
-            }
+                    restrictedToMinimumLevel: LogEventLevel.Warning);
+
+            loggerConfiguration.WriteTo.Logger(subLc => subLc
+                    .WriteTo.Console()
+                    .Filter.ByIncludingOnly(logEvent => 
+                        logEvent.MessageTemplate.Text.StartsWith("HTTP_REQUEST"))
+                    .WriteTo.MSSqlServer(
+                        connectionString: connectionString,
+                        sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = false },
+                        columnOptions: GetColumnOptions(),
+                        restrictedToMinimumLevel: LogEventLevel.Information
+                    )
+                );
+        });
+    }
+
+    public static IApplicationBuilder CustomEnrichSerilog(this IApplicationBuilder app)
+    {
+        return app.Use(async (context, next) =>
+        {
+            var userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
+            LogContext.PushProperty("UserId", userId);
+            LogContext.PushProperty("RequestPath", context.Request.Path.Value ?? "unknown");
+            LogContext.PushProperty("HttpMethod", context.Request.Method);
+
+            var correlationId = context.TraceIdentifier;
+            LogContext.PushProperty("CorrelationId", correlationId);
+
+            var sw = Stopwatch.StartNew();
+            await next.Invoke();
+            sw.Stop();
+            LogContext.PushProperty("ElapsedMs", sw.Elapsed.TotalMilliseconds);
         });
     }
 
@@ -132,16 +162,22 @@ public static class Utilities
         var columnOptions = new ColumnOptions
         {
             AdditionalColumns = new Collection<SqlColumn>
-            {
-                new("ApplicationName", SqlDbType.NVarChar,true, 50),
-                new("MachineName", SqlDbType.NVarChar, true, 50),
-                new("UserId", SqlDbType.NVarChar, true, 50) 
-            }
+        {
+            new("ApplicationName", SqlDbType.NVarChar, true, 50),
+            new("MachineName", SqlDbType.NVarChar, true, 50),
+            new("UserId", SqlDbType.NVarChar, true, 50),
+            new("RequestPath", SqlDbType.NVarChar, true, 512),
+            new("HttpMethod", SqlDbType.NVarChar, true, 16),
+            new("Environment", SqlDbType.NVarChar, true, 50),
+            new("CorrelationId", SqlDbType.NVarChar, true, 128),
+            new("ElapsedMs", SqlDbType.Float)
+        }
         };
-        
+
         columnOptions.Store.Remove(StandardColumn.Properties);
         columnOptions.Store.Remove(StandardColumn.MessageTemplate);
-        
+
         return columnOptions;
     }
+
 }

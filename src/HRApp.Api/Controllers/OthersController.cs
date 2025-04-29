@@ -63,11 +63,3 @@ public class FilesController : GenericController<Project>
 {
     public FilesController(IBaseRepository<Project> baserepo) : base(baserepo) { }
 }
-
-[ApiController]
-[Route("api/[controller]")]
-public class LogsController : GenericController<LogEntry>
-{
-    public LogsController(IBaseRepository<LogEntry> baserepo) : base(baserepo) { }
-}
-
