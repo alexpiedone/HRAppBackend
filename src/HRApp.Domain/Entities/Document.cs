@@ -1,4 +1,6 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HRApp.Domain;
 
 public enum DocumentType
 {
@@ -9,7 +11,7 @@ public enum DocumentType
     Other
 }
 
-[DbTable("Documents")]
+[Table("Documents")]
 public class Document : BaseEntity
 {
     public string FileName { get; set; } = string.Empty;

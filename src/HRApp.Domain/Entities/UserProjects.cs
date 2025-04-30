@@ -1,6 +1,8 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-[DbTable("UserProjects")]
+namespace HRApp.Domain;
+
+[Table("UserProjects")]
 public class UserProject : BaseEntity
 {
     public int UserId { get; set; }

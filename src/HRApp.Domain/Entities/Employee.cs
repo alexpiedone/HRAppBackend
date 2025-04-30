@@ -1,6 +1,8 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-[DbTable("Employees")]
+namespace HRApp.Domain;
+
+[Table("Employees")]
 public class Employee : BaseEntity
 {
     public string FullName { get; set; } = string.Empty;

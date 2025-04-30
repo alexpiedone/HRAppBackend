@@ -1,7 +1,9 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HRApp.Domain;
 
 
-[DbTable("Requests")]
+[Table("Requests")]
 public abstract class Request : BaseEntity
 {
     public RequestStatus Status { get; set; } = RequestStatus.Draft;

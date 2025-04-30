@@ -1,5 +1,6 @@
 ﻿using HRApp.Domain;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 namespace HRApp.Infrastructure;
@@ -20,7 +21,7 @@ public class AppDbContext : DbContext
 
         var entityTypes = assemblies
             .SelectMany(a => a.GetTypes())
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttribute<DbTableAttribute>() != null)
+            .Where(t => t.IsClass && !t.IsAbstract && t.GetCustomAttribute<TableAttribute>() != null)
             .ToList();
 
         foreach (var type in entityTypes)
@@ -34,5 +35,7 @@ public class AppDbContext : DbContext
                 generic.Invoke(modelBuilder, null);
             }
         }
+
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 }

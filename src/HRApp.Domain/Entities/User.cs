@@ -1,25 +1,29 @@
-﻿namespace HRApp.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HRApp.Domain;
 
 
-[DbTable("Users")]
+[Table("Users")]
 public class User : BaseEntity
 {
     public string Username { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
-    
+
     public string Phone { get; set; } = string.Empty;
 
-     public int? AvatarFileId { get; set; }
+    public int? AvatarFileId { get; set; }
     public File? AvatarFile { get; set; }
 
     public int CompanyId { get; set; }
     public Company? Company { get; set; }
-    
+
     public ICollection<UserProject> UserProjects { get; set; } = [];
     public ICollection<Project> Projects { get; set; } = [];
-    
+
     public ICollection<UserResponsibility> UserResponsibilities { get; set; } = [];
     public ICollection<Responsability> Responsabilities { get; set; } = [];
 
@@ -33,4 +37,19 @@ public enum UserRole
     Admin,
     Manager,
     Employee
+}
+
+public class UserConfiguration : IEntityTypeConfiguration<User>
+{
+    public void Configure(EntityTypeBuilder<User> builder)
+    {
+        builder.HasData
+        (
+            new User
+            {
+                Username = "Shadow",
+                Email = "test"
+            }
+        );
+    }
 }

@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HRApp.Domain;
 
-[DbTable("Projects")]
+[Table("Projects")]
 public class Project : BaseEntity
 {
     [Required]

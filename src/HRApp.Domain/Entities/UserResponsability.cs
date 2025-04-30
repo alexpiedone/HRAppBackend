@@ -1,6 +1,8 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-[DbTable("UserResponsabilities")]
+namespace HRApp.Domain;
+
+[Table("UserResponsabilities")]
 public class UserResponsibility : BaseEntity
 {
     public int UserId { get; set; }

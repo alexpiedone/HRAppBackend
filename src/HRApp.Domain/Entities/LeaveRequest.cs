@@ -1,7 +1,9 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HRApp.Domain;
 
 
-[DbTable("LeaveRequests")]
+[Table("LeaveRequests")]
 public class LeaveRequest : Request
 {
     public LeaveType LeaveType { get; set; } = LeaveType.Paid;

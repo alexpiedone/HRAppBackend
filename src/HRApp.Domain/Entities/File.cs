@@ -1,6 +1,8 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-[DbTable("Files")]
+namespace HRApp.Domain;
+
+[Table("Files")]
 public class File : BaseEntity
 {
     public string FileName { get; set; } = string.Empty;

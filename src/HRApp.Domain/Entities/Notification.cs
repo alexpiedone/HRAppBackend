@@ -1,7 +1,9 @@
-﻿namespace HRApp.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HRApp.Domain;
 
 
-[DbTable("Notifications")]
+[Table("Notifications")]
 public class Notification : BaseEntity
 {
     public string Title { get; set; } = string.Empty;
