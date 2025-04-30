@@ -34,11 +34,13 @@ public class UsersController : GenericController<User>
         var result = users.Select(u => new  ColleagueDto
         {
             Id = u.Id,
-            Name = u.FullName, // sau FirstName + LastName
+            Name = u.FullName, 
             Email = u.Email,
             Phone = u.Phone,
             Responsibilities = string.Join(", ", u.UserResponsibilities.Select(r => r.Responsibility.Description)),
-            //AvatarUrl = u.Avatar != null ? $"api/files/{u.Avatar.Id}" : null,
+            Avatar = u.AvatarFile?.Data != null 
+                ? $"data:{u.AvatarFile.ContentType};base64,{Convert.ToBase64String(u.AvatarFile.Data)}" 
+                : null,
             Projects = u.UserProjects.Select(up => up.Project.Name).ToList()
         });
 

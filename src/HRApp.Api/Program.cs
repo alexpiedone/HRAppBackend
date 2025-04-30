@@ -1,6 +1,7 @@
 using HRApp.Api;
 using HRApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlOptions => sqlOptions.MigrationsAssembly("HRApp.Infrastructure")
+    )
+    .ConfigureWarnings(warnings => 
+        warnings.Ignore(RelationalEventId.PendingModelChangesWarning)
     )
 );
 

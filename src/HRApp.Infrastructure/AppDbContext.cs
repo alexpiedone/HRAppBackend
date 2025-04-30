@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         base.OnModelCreating(modelBuilder);
 
         var assemblies = new[]
@@ -35,7 +36,8 @@ public class AppDbContext : DbContext
                 generic.Invoke(modelBuilder, null);
             }
         }
-
+        
+        modelBuilder.ApplyConfiguration(new CompanyConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 }

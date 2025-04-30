@@ -4,6 +4,7 @@ using HRApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430153441_seed")]
+    partial class seed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -400,20 +403,6 @@ namespace HRApp.Infrastructure.Migrations
                     b.HasIndex("TrainingId");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Active = true,
-                            CompanyId = 0,
-                            CreatedAt = new DateTime(2025, 4, 30, 18, 36, 38, 448, DateTimeKind.Local).AddTicks(5474),
-                            Email = "test",
-                            FullName = "",
-                            PasswordHash = "",
-                            Phone = "",
-                            Username = "Shadow"
-                        });
                 });
 
             modelBuilder.Entity("HRApp.Domain.UserProject", b =>

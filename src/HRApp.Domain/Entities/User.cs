@@ -47,6 +47,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         (
             new User
             {
+                Id = 1,
                 Username = "Shadow",
                 Email = "test"
             }

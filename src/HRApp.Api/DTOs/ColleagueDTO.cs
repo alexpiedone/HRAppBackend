@@ -8,6 +8,6 @@ public class ColleagueDto
     public string Responsibilities { get; set; }  
     public string Email { get; set; }
     public string Phone { get; set; }
-    public string AvatarUrl { get; set; }
+    public string Avatar { get; set; }
     public List<string> Projects { get; set; }
 }
