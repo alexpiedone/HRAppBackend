@@ -16,31 +16,28 @@ public class RequestLoggingMiddleware
     {
         var startTime = DateTime.UtcNow;
 
-        using (_logger.BeginScope(new Dictionary<string, object> { ["LogRequest"] = true }))
+        try
         {
-            try
-            {
-                await _next(context);
-                var elapsed = (DateTime.UtcNow - startTime).TotalMilliseconds;
+            await _next(context);
+            var elapsed = (DateTime.UtcNow - startTime).TotalMilliseconds;
 
-                _logger.LogInformation(
-                    "HTTP_REQUEST {Method} {Path} responded {StatusCode} in {ElapsedMs}ms",
-                    context.Request.Method,
-                    context.Request.Path,
-                    context.Response.StatusCode,
-                    elapsed);
-            }
-            catch (Exception ex)
-            {
-                var elapsed = (DateTime.UtcNow - startTime).TotalMilliseconds;
-                _logger.LogError(
-                    ex,
-                    "HTTP {Method} {Path} failed after {ElapsedMs}ms",
-                    context.Request.Method,
-                    context.Request.Path,
-                    elapsed);
-                throw;
-            }
+            _logger.LogInformation(
+                "HTTP_REQUEST {Method} {Path} responded {StatusCode} in {ElapsedMs}ms",
+                context.Request.Method,
+                context.Request.Path,
+                context.Response.StatusCode,
+                elapsed);
+        }
+        catch (Exception ex)
+        {
+            var elapsed = (DateTime.UtcNow - startTime).TotalMilliseconds;
+            _logger.LogError(
+                ex,
+                "HTTP {Method} {Path} failed after {ElapsedMs}ms",
+                context.Request.Method,
+                context.Request.Path,
+                elapsed);
+            throw;
         }
     }
 }

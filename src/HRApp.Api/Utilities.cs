@@ -126,8 +126,9 @@ public static class Utilities
 
             loggerConfiguration.WriteTo.Logger(subLc => subLc
                     .WriteTo.Console()
-                    .Filter.ByIncludingOnly(logEvent => 
-                        logEvent.MessageTemplate.Text.StartsWith("HTTP_REQUEST"))
+                    .Filter.ByIncludingOnly(logEvent =>
+                        logEvent.MessageTemplate.Text.StartsWith("HTTP_REQUEST") ||
+                        logEvent.MessageTemplate.Text.StartsWith("cst"))
                     .WriteTo.MSSqlServer(
                         connectionString: connectionString,
                         sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = false },
@@ -186,22 +187,44 @@ public static class Utilities
 
 public static class MigrationManager
 {
-    public static WebApplication MigrateDatabase(this WebApplication webApp)
+    public static async Task ApplyMigrationsWithRetryAsync(this WebApplication app)
     {
-        using (var scope = webApp.Services.CreateScope())
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        var context = services.GetRequiredService<AppDbContext>();
+
+        const int maxRetryAttempts = 5;
+        var retryDelay = TimeSpan.FromSeconds(5);
+        using (logger.BeginScope(new Dictionary<string, object> { ["LogRequest"] = true }))
         {
-            using (var appContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+            for (int attempt = 1; attempt <= maxRetryAttempts; attempt++)
             {
                 try
                 {
-                    appContext.Database.Migrate();
+                    logger.Log($"Se aplica migrare  (incercarea {attempt})...");
+
+                    if (!await context.Database.CanConnectAsync())
+                    {
+                        logger.LogWarning("Nu s a putut conecta la baza de date.");
+                    }
+                    await context.Database.MigrateAsync();
+                    logger.LogInformation("Migratii aplicate cu succes");
+                    return;
+                }
+                catch (Exception ex) when (attempt < maxRetryAttempts)
+                {
+                    logger.LogError(ex, "Migration attempt {Attempt} failed. Retrying in {Delay} seconds...",
+                        attempt, retryDelay.TotalSeconds);
+                    await Task.Delay(retryDelay);
                 }
                 catch (Exception ex)
                 {
+                    logger.LogCritical(ex, "Failed to apply database migrations after {Attempt} attempts",
+                        maxRetryAttempts);
                     throw;
                 }
             }
         }
-        return webApp;
     }
 }

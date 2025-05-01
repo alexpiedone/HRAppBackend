@@ -36,7 +36,7 @@ InfrastructureServices.AddInfrastructure(builder.Services);
 
 var app = builder.Build();
 
-app.MigrateDatabase();
+await app.ApplyMigrationsWithRetryAsync();
 Utilities.CustomEnrichSerilog(app);
 
 app.UseMiddleware<RequestLoggingMiddleware>();
