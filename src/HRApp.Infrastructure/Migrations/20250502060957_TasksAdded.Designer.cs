@@ -4,6 +4,7 @@ using HRApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250502060957_TasksAdded")]
+    partial class TasksAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace HRApp.Infrastructure.Migrations
                             Id = 1,
                             Active = true,
                             Address = "",
-                            CreatedAt = new DateTime(2025, 5, 2, 9, 16, 25, 802, DateTimeKind.Local).AddTicks(6015),
+                            CreatedAt = new DateTime(2025, 5, 2, 9, 9, 55, 136, DateTimeKind.Local).AddTicks(6040),
                             Email = "helpiehr@contact.ro",
                             Name = "Helpie",
                             PhoneNumber = "0430-571-555"
@@ -383,9 +386,6 @@ namespace HRApp.Infrastructure.Migrations
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
-                    b.Property<int>("TaskStatus")
-                        .HasColumnType("int");
-
                     b.Property<int>("UserAssignedId")
                         .HasColumnType("int");
 
@@ -499,7 +499,7 @@ namespace HRApp.Infrastructure.Migrations
                             Id = 1,
                             Active = true,
                             CompanyId = 0,
-                            CreatedAt = new DateTime(2025, 5, 2, 9, 16, 25, 806, DateTimeKind.Local).AddTicks(2124),
+                            CreatedAt = new DateTime(2025, 5, 2, 9, 9, 55, 140, DateTimeKind.Local).AddTicks(1725),
                             Email = "test",
                             FullName = "",
                             PasswordHash = "",
