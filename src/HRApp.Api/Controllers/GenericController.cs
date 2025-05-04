@@ -20,7 +20,7 @@ public abstract class GenericController<T> : ControllerBase
 
     [HttpGet("GetAll")]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<T>>> GetAll()
+    public virtual async Task<ActionResult<IEnumerable<T>>> GetAll()
     {
         var items = await _repository.GetAllAsync();
         return Ok(items);

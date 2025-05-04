@@ -18,9 +18,8 @@ public class TaskItem : BaseEntity
 }
 
 [Table("TaskActions")]
-public class TaskAction
+public class TaskAction : BaseEntity
 {
-    [Key]
     [ForeignKey("TaskItem")]
     public int TaskId { get; set; }
     

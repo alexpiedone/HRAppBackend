@@ -4,6 +4,7 @@ using HRApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250502122305_NewItemModified")]
+    partial class NewItemModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace HRApp.Infrastructure.Migrations
                             Id = 1,
                             Active = true,
                             Address = "",
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 876, DateTimeKind.Local).AddTicks(704),
+                            CreatedAt = new DateTime(2025, 5, 2, 15, 23, 3, 254, DateTimeKind.Local).AddTicks(8422),
                             Email = "helpiehr@contact.ro",
                             Name = "Helpie",
                             PhoneNumber = "0430-571-555"
@@ -171,59 +174,6 @@ namespace HRApp.Infrastructure.Migrations
                     b.ToTable("Files");
                 });
 
-            modelBuilder.Entity("HRApp.Domain.NewsCategoryItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("NewsCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Active = true,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 880, DateTimeKind.Local).AddTicks(772),
-                            Name = "Announcement"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Active = true,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 880, DateTimeKind.Local).AddTicks(1280),
-                            Name = "Update"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Active = true,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 880, DateTimeKind.Local).AddTicks(1295),
-                            Name = "Event"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Active = true,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 880, DateTimeKind.Local).AddTicks(1298),
-                            Name = "General"
-                        });
-                });
-
             modelBuilder.Entity("HRApp.Domain.NewsItem", b =>
                 {
                     b.Property<int>("Id")
@@ -238,7 +188,7 @@ namespace HRApp.Infrastructure.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("Category")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -256,10 +206,6 @@ namespace HRApp.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("NewsItems");
                 });
@@ -396,14 +342,8 @@ namespace HRApp.Infrastructure.Migrations
 
             modelBuilder.Entity("HRApp.Domain.TaskAction", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("TaskId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
 
                     b.Property<string>("ApiEndpoint")
                         .HasMaxLength(200)
@@ -412,12 +352,6 @@ namespace HRApp.Infrastructure.Migrations
                     b.Property<string>("ButtonText")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TaskId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -428,10 +362,7 @@ namespace HRApp.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId")
-                        .IsUnique();
+                    b.HasKey("TaskId");
 
                     b.ToTable("TaskActions");
                 });
@@ -580,7 +511,7 @@ namespace HRApp.Infrastructure.Migrations
                             Id = 1,
                             Active = true,
                             CompanyId = 0,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 879, DateTimeKind.Local).AddTicks(6448),
+                            CreatedAt = new DateTime(2025, 5, 2, 15, 23, 3, 258, DateTimeKind.Local).AddTicks(4184),
                             Email = "test",
                             FullName = "",
                             PasswordHash = "",
@@ -667,25 +598,6 @@ namespace HRApp.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.ToTable("LeaveRequests");
-                });
-
-            modelBuilder.Entity("HRApp.Domain.NewsItem", b =>
-                {
-                    b.HasOne("HRApp.Domain.User", "Author")
-                        .WithMany("NewsItems")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HRApp.Domain.NewsCategoryItem", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("HRApp.Domain.Notification", b =>
@@ -814,8 +726,6 @@ namespace HRApp.Infrastructure.Migrations
 
             modelBuilder.Entity("HRApp.Domain.User", b =>
                 {
-                    b.Navigation("NewsItems");
-
                     b.Navigation("Notifications");
 
                     b.Navigation("Projects");

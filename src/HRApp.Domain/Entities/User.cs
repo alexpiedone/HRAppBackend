@@ -21,6 +21,9 @@ public class User : BaseEntity
     public int CompanyId { get; set; }
     public Company? Company { get; set; }
 
+    
+    public virtual ICollection<NewsItem> NewsItems { get; set; } = [];
+
     public ICollection<UserProject> UserProjects { get; set; } = [];
     public ICollection<Project> Projects { get; set; } = [];
 

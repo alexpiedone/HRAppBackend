@@ -39,5 +39,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.ApplyConfiguration(new CompanyConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new NewsCategoryItemConfiguration());
     }
 }

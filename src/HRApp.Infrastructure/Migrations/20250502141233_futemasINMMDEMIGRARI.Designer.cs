@@ -4,6 +4,7 @@ using HRApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250502141233_futemasINMMDEMIGRARI")]
+    partial class futemasINMMDEMIGRARI
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace HRApp.Infrastructure.Migrations
                             Id = 1,
                             Active = true,
                             Address = "",
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 876, DateTimeKind.Local).AddTicks(704),
+                            CreatedAt = new DateTime(2025, 5, 2, 17, 12, 33, 301, DateTimeKind.Local).AddTicks(4084),
                             Email = "helpiehr@contact.ro",
                             Name = "Helpie",
                             PhoneNumber = "0430-571-555"
@@ -198,28 +201,28 @@ namespace HRApp.Infrastructure.Migrations
                         {
                             Id = 1,
                             Active = true,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 880, DateTimeKind.Local).AddTicks(772),
+                            CreatedAt = new DateTime(2025, 5, 2, 17, 12, 33, 304, DateTimeKind.Local).AddTicks(8335),
                             Name = "Announcement"
                         },
                         new
                         {
                             Id = 2,
                             Active = true,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 880, DateTimeKind.Local).AddTicks(1280),
+                            CreatedAt = new DateTime(2025, 5, 2, 17, 12, 33, 304, DateTimeKind.Local).AddTicks(8719),
                             Name = "Update"
                         },
                         new
                         {
                             Id = 3,
                             Active = true,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 880, DateTimeKind.Local).AddTicks(1295),
+                            CreatedAt = new DateTime(2025, 5, 2, 17, 12, 33, 304, DateTimeKind.Local).AddTicks(8731),
                             Name = "Event"
                         },
                         new
                         {
                             Id = 4,
                             Active = true,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 880, DateTimeKind.Local).AddTicks(1298),
+                            CreatedAt = new DateTime(2025, 5, 2, 17, 12, 33, 304, DateTimeKind.Local).AddTicks(8733),
                             Name = "General"
                         });
                 });
@@ -396,14 +399,8 @@ namespace HRApp.Infrastructure.Migrations
 
             modelBuilder.Entity("HRApp.Domain.TaskAction", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("TaskId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
 
                     b.Property<string>("ApiEndpoint")
                         .HasMaxLength(200)
@@ -412,12 +409,6 @@ namespace HRApp.Infrastructure.Migrations
                     b.Property<string>("ButtonText")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TaskId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -428,10 +419,7 @@ namespace HRApp.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId")
-                        .IsUnique();
+                    b.HasKey("TaskId");
 
                     b.ToTable("TaskActions");
                 });
@@ -580,7 +568,7 @@ namespace HRApp.Infrastructure.Migrations
                             Id = 1,
                             Active = true,
                             CompanyId = 0,
-                            CreatedAt = new DateTime(2025, 5, 4, 9, 37, 59, 879, DateTimeKind.Local).AddTicks(6448),
+                            CreatedAt = new DateTime(2025, 5, 2, 17, 12, 33, 304, DateTimeKind.Local).AddTicks(5293),
                             Email = "test",
                             FullName = "",
                             PasswordHash = "",

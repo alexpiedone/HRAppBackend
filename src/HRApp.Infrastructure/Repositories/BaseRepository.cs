@@ -1,6 +1,7 @@
 ﻿using HRApp.Application;
 using HRApp.Domain;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Linq.Expressions;
 
 namespace HRApp.Infrastructure;
