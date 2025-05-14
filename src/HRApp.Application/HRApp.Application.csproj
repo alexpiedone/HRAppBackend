@@ -1,7 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\HrApp.Communication\HrApp.Communication.csproj" />
     <ProjectReference Include="..\HRApp.Domain\HRApp.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="HRApp.Api">
+      <HintPath>..\HRApp.Api\bin\Debug\net9.0\HRApp.Api.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <PropertyGroup>

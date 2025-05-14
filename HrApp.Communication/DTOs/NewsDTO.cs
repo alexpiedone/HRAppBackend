@@ -1,4 +1,5 @@
-﻿namespace HRApp.Api;
+﻿namespace HRApp.Communication;
+
 public class NewsItemDto
 {
     public string Id { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace HRApp.Api;
+﻿namespace HRApp.Communication;
 
 public class ColleagueDto
 {

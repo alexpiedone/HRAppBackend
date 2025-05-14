@@ -1,6 +1,6 @@
 ﻿using HRApp.Application;
+using HRApp.Communication;
 using HRApp.Domain;
-using HRApp.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
